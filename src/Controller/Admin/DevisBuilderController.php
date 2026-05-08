@@ -58,6 +58,27 @@ class DevisBuilderController extends AbstractController
                 $devis->addItem($offerItem);
             }
 
+            if ($request->request->getBoolean('include_mockup')) {
+                $mockupItem = new DevisItem();
+                $mockupItem->setCategoryName('Maquette');
+                $mockupItem->setItemName('Maquette');
+                $mockupItem->setDescription('Maquette visuelle avant intégration pour valider la direction graphique.');
+                $mockupItem->setPrice(50.0);
+                $mockupItem->setIsMonthly(false);
+                $devis->addItem($mockupItem);
+            }
+
+            $extraHoursCount = max(0, (int) $request->request->get('extra_hours_count', 0));
+            if ($extraHoursCount > 0) {
+                $extraHoursItem = new DevisItem();
+                $extraHoursItem->setCategoryName('Heures supplémentaires');
+                $extraHoursItem->setItemName(sprintf('Heures supplémentaires (%dh)', $extraHoursCount));
+                $extraHoursItem->setDescription(sprintf('Facturation de %d heure(s) supplémentaire(s) à 30€ HT / heure.', $extraHoursCount));
+                $extraHoursItem->setPrice(30.0 * $extraHoursCount);
+                $extraHoursItem->setIsMonthly(false);
+                $devis->addItem($extraHoursItem);
+            }
+
             $selectedSubscriptionIndex = $request->request->get('selected_subscription');
             if (null !== $selectedSubscriptionIndex && isset($subscriptions[(int) $selectedSubscriptionIndex])) {
                 $subscription = $subscriptions[(int) $selectedSubscriptionIndex];

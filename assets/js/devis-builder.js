@@ -8,11 +8,19 @@ const offerLabels = document.querySelectorAll('.offer-option:not(.subscription-o
 const offerRadios = document.querySelectorAll('input[name="selected_offer"]');
 const subscriptionLabels = document.querySelectorAll('.subscription-option');
 const subscriptionRadios = document.querySelectorAll('input[name="selected_subscription"]');
+const mockupCheckbox = document.querySelector('input[name="include_mockup"]');
+const mockupLabel = document.getElementById('mockup-label');
+const extraHoursInput = document.querySelector('input[name="extra_hours_count"]');
+const extraHoursLabel = document.getElementById('extra-hours-label');
 
 let selectedOfferPrice = 0;
 let selectedOfferName = '';
 let selectedSubscriptionPrice = 0;
 let selectedSubscriptionName = '';
+let selectedMockupPrice = 0;
+let selectedMockupName = '';
+let selectedExtraHoursPrice = 0;
+let selectedExtraHoursName = '';
 
 function formatPrice(n) {
     return n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -30,6 +38,16 @@ function recalculate() {
 
     if (selectedSubscriptionName) {
         selectedHtml += '<div class="d-flex justify-content-between small mb-1 fw-bold text-primary"><span>' + selectedSubscriptionName + '</span><span>' + formatPrice(selectedSubscriptionPrice) + ' \u20ac/mois</span></div>';
+    }
+
+    if (selectedMockupName) {
+        ht += selectedMockupPrice;
+        selectedHtml += '<div class="d-flex justify-content-between small mb-1 fw-bold text-primary"><span>' + selectedMockupName + '</span><span>' + formatPrice(selectedMockupPrice) + ' \u20ac</span></div>';
+    }
+
+    if (selectedExtraHoursName) {
+        ht += selectedExtraHoursPrice;
+        selectedHtml += '<div class="d-flex justify-content-between small mb-1 fw-bold text-primary"><span>' + selectedExtraHoursName + '</span><span>' + formatPrice(selectedExtraHoursPrice) + ' \u20ac</span></div>';
     }
 
     checkboxes.forEach(function(cb) {
@@ -89,6 +107,27 @@ subscriptionLabels.forEach(function(label) {
         recalculate();
     });
 });
+
+if (mockupCheckbox && mockupLabel) {
+    mockupCheckbox.addEventListener('change', function() {
+        selectedMockupPrice = this.checked ? (parseFloat(this.dataset.mockupPrice) || 0) : 0;
+        selectedMockupName = this.checked ? (this.dataset.mockupName || 'Maquette') : '';
+        mockupLabel.classList.toggle('selected', this.checked);
+        recalculate();
+    });
+}
+
+if (extraHoursInput && extraHoursLabel) {
+    extraHoursInput.addEventListener('input', function() {
+        const hours = Math.max(0, parseInt(this.value || '0', 10) || 0);
+        const hourlyPrice = parseFloat(this.dataset.hourlyPrice) || 30;
+        this.value = String(hours);
+        selectedExtraHoursPrice = hours * hourlyPrice;
+        selectedExtraHoursName = hours > 0 ? ((this.dataset.hourlyName || 'Heures supplémentaires') + ' (' + hours + 'h)') : '';
+        extraHoursLabel.classList.toggle('selected', hours > 0);
+        recalculate();
+    });
+}
 
 function updateCategoryLocks() {
     const categories = {};
