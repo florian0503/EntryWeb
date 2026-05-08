@@ -98,6 +98,59 @@
 
             <div class="card mb-4">
                 <div class="card-header bg-white">
+                    <h5 class="card-title mb-0"><i class="fa fa-pen-ruler me-2"></i>Maquette</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="offer-option rounded p-3 d-block h-100" id="mockup-label">
+                                <input type="checkbox" name="include_mockup" value="1" id="include_mockup" data-mockup-price="50" data-mockup-name="Maquette">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <strong>Maquette</strong>
+                                    <span class="badge bg-primary ms-2 text-nowrap">50 € HT</span>
+                                </div>
+                                <div class="text-muted small">Maquette visuelle avant intégration pour valider la direction graphique.</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0"><i class="fa fa-clock me-2"></i>Heures supplémentaires</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="offer-option rounded p-3 d-block h-100" for="extra_hours_count" id="extra-hours-label">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <strong>Heure supplémentaire</strong>
+                                    <span class="badge bg-primary ms-2 text-nowrap">30 € HT / heure</span>
+                                </div>
+                                <div class="text-muted small mb-3">Ajoute des heures de travail supplémentaires facturées au forfait horaire.</div>
+                                <div>
+                                    <label class="form-label mb-1" for="extra_hours_count">Nombre d'heures</label>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        id="extra_hours_count"
+                                        name="extra_hours_count"
+                                        min="0"
+                                        step="1"
+                                        value="0"
+                                        data-hourly-price="30"
+                                        data-hourly-name="Heures supplémentaires"
+                                    >
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-white">
                     <h5 class="card-title mb-0"><i class="fa fa-rotate me-2"></i>Abonnement choisi <span class="text-danger">*</span></h5>
                 </div>
                 <div class="card-body">

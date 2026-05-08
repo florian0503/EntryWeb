@@ -171,6 +171,29 @@ final class DevisGrid
                 ],
             ],
             [
+                'name' => 'Design graphique',
+                'items' => [
+                    [
+                        'name' => 'Création de logo',
+                        'description' => 'Conception d\'un logo professionnel avec proposition graphique et version finale web/impression.',
+                        'price' => 180.0,
+                        'isMonthly' => false,
+                    ],
+                    [
+                        'name' => 'Création de flyer',
+                        'description' => 'Design d\'un flyer promotionnel prêt à imprimer (recto/verso).',
+                        'price' => 120.0,
+                        'isMonthly' => false,
+                    ],
+                    [
+                        'name' => 'Création de carte de visite',
+                        'description' => 'Conception d\'une carte de visite professionnelle, format impression standard.',
+                        'price' => 80.0,
+                        'isMonthly' => false,
+                    ],
+                ],
+            ],
+            [
                 'name' => 'Acquisition & Fidélisation',
                 'items' => [
                     [

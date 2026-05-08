@@ -1706,8 +1706,8 @@ body {
 /* ── Newsletter Lead Magnet ─────────────────────────────────── */
 .newsletter-section {
     padding: 80px 24px;
-    background: #f8faff;
-    border-top: 1px solid #e8f0ff;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
 }
 
 .newsletter-container {
@@ -1717,11 +1717,11 @@ body {
 
 .newsletter-badge {
     display: inline-block;
-    background: #e8f0ff;
+    background: #f3f6fb;
     color: #0066ff;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: 1.4px;
     text-transform: uppercase;
     padding: 6px 14px;
     border-radius: 20px;
@@ -1737,14 +1737,14 @@ body {
 
 .newsletter-title {
     font-size: 28px;
-    font-weight: 400;
-    color: #1a1a2e;
-    line-height: 1.3;
+    font-weight: 500;
+    color: #151b2b;
+    line-height: 1.35;
     margin: 0 0 28px;
 }
 
 .newsletter-title-highlight {
-    font-weight: 700;
+    font-weight: 600;
     color: #0066ff;
 }
 
@@ -1759,30 +1759,32 @@ body {
 
 .newsletter-benefits li {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     font-size: 15px;
-    color: #444;
+    line-height: 1.5;
+    color: #3f4a5f;
 }
 
 .newsletter-benefits li svg {
     flex-shrink: 0;
     color: #0066ff;
+    margin-top: 3px;
 }
 
 .newsletter-form-wrapper {
-    background: #fff;
-    border: 1px solid #e0e8ff;
+    background: #fbfcff;
+    border: 1px solid #e7edf7;
     border-radius: 16px;
     padding: 36px;
-    box-shadow: 0 4px 24px rgba(0, 102, 255, 0.06);
+    box-shadow: 0 8px 28px rgba(17, 24, 39, 0.06);
 }
 
 .newsletter-label {
     display: block;
     font-size: 13px;
-    font-weight: 600;
-    color: #1a1a2e;
+    font-weight: 500;
+    color: #2b3448;
     margin-bottom: 10px;
 }
 
@@ -1795,11 +1797,11 @@ body {
 .newsletter-input {
     width: 100%;
     padding: 14px 16px;
-    border: 1px solid #d0d8f0;
+    border: 1px solid #d7deea;
     border-radius: 8px;
     font-size: 15px;
-    color: #1a1a2e;
-    background: #f8faff;
+    color: #1f2937;
+    background: #ffffff;
     box-sizing: border-box;
     transition: border-color 0.2s;
     outline: none;
@@ -1822,7 +1824,7 @@ body {
     border: none;
     border-radius: 8px;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     transition: background 0.2s, transform 0.2s;
 }
@@ -1834,7 +1836,7 @@ body {
 
 .newsletter-privacy {
     font-size: 12px;
-    color: #aaa;
+    color: #7b8495;
     margin: 12px 0 0;
     text-align: center;
 }
@@ -3282,7 +3284,7 @@ html, body {
 }
 
 .team-grid--three .team-card-image {
-    height: 350px;
+    height: 650px;
 }
 
 .team-grid--three .team-card-name {
@@ -3369,13 +3371,13 @@ html, body {
         grid-template-columns: 1fr;
     }
 
-    .team-grid--three {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.75rem;
+    .team-grid.team-grid--three {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
     }
 
     .team-grid--three .team-card-image {
-        height: 280px;
+        height: 650px;
     }
 
     .team-grid--three .team-card-name {
@@ -3392,8 +3394,8 @@ html, body {
 }
 
 @media (max-width: 768px) {
-    .team-grid--three {
-        grid-template-columns: 1fr;
+    .team-grid.team-grid--three {
+        grid-template-columns: 1fr !important;
     }
 
     .about-hero {
