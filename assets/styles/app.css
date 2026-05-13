@@ -673,7 +673,7 @@ body {
 
 .founders-block-title {
     font-size: 26px;
-    font-weight: 600;
+    font-weight: 400;
     color: #1a1a1a;
     margin-bottom: 16px;
     line-height: 1.3;
@@ -685,9 +685,6 @@ body {
     color: #4a5568;
 }
 
-.founders-block-text strong {
-    color: #1a1a1a;
-}
 
 .founders-signature {
     display: flex;
@@ -712,7 +709,7 @@ body {
 
 .founders-signature-name {
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 500;
     color: #1a1a1a;
 }
 
@@ -3279,7 +3276,7 @@ html, body {
 .team-card-image {
     height: 650px;
     background-size: cover;
-    background-position: center top;
+    background-position: center 15%;
     position: relative;
 }
 
