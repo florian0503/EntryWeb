@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}EntryWeb — Sites web professionnels clé en main pour entrepreneurs{% endblock %}
-{% block meta_description %}Créez votre site web professionnel à partir de 349€ HT. Design moderne, hébergement inclus, livraison rapide. Devis gratuit.{% endblock %}
+{% block meta_description %}Créez votre site web professionnel jusqu'à 5 pages à 995,90€ HT. Design sur mesure, hébergement inclus, livraison rapide. Devis gratuit.{% endblock %}
 
 {% block body %}
 <style>
@@ -12,6 +12,7 @@
 .offer-card-badge-pulse {
     animation: badge-pulse 2s ease-in-out infinite;
 }
+
 </style>
 <div data-controller="scroll-animation">
     <section class="hero">
@@ -155,56 +156,18 @@
     <section class="formules">
         <div class="formules-container">
             <div class="formules-header swiss-fade-up" data-scroll-animation-target="item">
-                <h2 class="formules-title">Des formules adaptées à chaque projet</h2>
+                <h2 class="formules-title">Une offre unique, tout compris</h2>
                 <p class="formules-description">
-                    Que vous débutiez ou souhaitiez développer votre activité, nous avons la solution pour vous.
+                    Un site web professionnel jusqu'à 5 pages, clé en main. Hébergement, maintenance et sécurité inclus.
                 </p>
             </div>
-            <div class="formules-cards" data-controller="formule-selection">
-                <div class="formule-card swiss-fade-up" data-formule-selection-target="card" data-action="click->formule-selection#select" data-scroll-animation-target="item" data-delay="0">
-                    <h3 class="formule-card-title">Pack Essentiel</h3>
-                    <p class="formule-card-price">349€<sup>HT</sup></p>
-                    <p class="formule-card-price-sub">+ 49€<sup>HT</sup>/mois</p>
-                    <p class="formule-card-desc">Idéal pour démarrer votre présence en ligne</p>
-                    <ul class="formule-card-features">
-                        <li><span class="formule-check formule-check--blue"></span>1 page personnalisée</li>
-                        <li><span class="formule-check formule-check--blue"></span>Design responsive</li>
-                        <li><span class="formule-check formule-check--blue"></span>Hébergement inclus</li>
-                        <li><span class="formule-check formule-check--blue"></span>Livraison 3 semaines</li>
-                    </ul>
-                    <a href="{{ path('app_offers') }}" class="btn btn-formule btn-formule-primary">Choisir</a>
-                </div>
-                <div class="formule-card formule-card--selected swiss-fade-up" data-formule-selection-target="card" data-action="click->formule-selection#select" data-scroll-animation-target="item" data-delay="150">
-                    <div class="offer-card-badge offer-card-badge-pulse" style="transform:translateX(-50%) scale(1);opacity:1;background:#ef4444;color:#fff;">Offre de lancement</div>
-                    <h3 class="formule-card-title">Pack Business</h3>
-                    <p class="formule-card-price">449€<sup>HT</sup></p>
-                    <p class="formule-card-price-sub">+ 79€<sup>HT</sup>/mois</p>
-                    <p class="formule-card-desc">Pour les entreprises ambitieuses</p>
-                    <ul class="formule-card-features">
-                        <li><span class="formule-check formule-check--blue"></span>Jusqu'à 5 pages</li>
-                        <li><span class="formule-check formule-check--blue"></span>Blog intégré</li>
-                        <li><span class="formule-check formule-check--blue"></span>Structure SEO optimisée</li>
-                        <li><span class="formule-check formule-check--blue"></span>Livraison 5 semaines</li>
-                    </ul>
-                    <a href="{{ path('app_offers') }}" class="btn btn-formule btn-formule-primary">Choisir</a>
-                </div>
-                <div class="formule-card swiss-fade-up" data-formule-selection-target="card" data-action="click->formule-selection#select" data-scroll-animation-target="item" data-delay="300">
-                    <div class="offer-card-badge offer-card-badge-pulse" style="transform:translateX(-50%) scale(1);opacity:1;background:#ef4444;color:#fff;">Offre de lancement</div>
-                    <h3 class="formule-card-title">E-commerce & Sur-Mesure</h3>
-                    <p class="formule-card-price">Sur devis</p>
-                    <p class="formule-card-price-sub">+ 99€<sup>HT</sup>/mois</p>
-                    <p class="formule-card-desc">Votre boutique en ligne complète</p>
-                    <ul class="formule-card-features">
-                        <li><span class="formule-check formule-check--blue"></span>Boutique en ligne</li>
-                        <li><span class="formule-check formule-check--blue"></span>Paiement sécurisé</li>
-                        <li><span class="formule-check formule-check--blue"></span>Gestion des stocks</li>
-                        <li><span class="formule-check formule-check--blue"></span>Tableau de bord</li>
-                    </ul>
-                    <a href="{{ path('app_offers') }}" class="btn btn-formule btn-formule-primary">Choisir</a>
-                </div>
+
+            <div class="swiss-fade-up" data-scroll-animation-target="item" style="text-align:center;margin-bottom:2rem;">
+                <a href="{{ path('app_offers') }}" class="btn btn-lg btn-primary">Découvrir l'offre</a>
             </div>
+
             <p class="formules-footer swiss-fade-in" data-scroll-animation-target="item">
-                Engagement 24 mois. <a href="{{ path('app_offers') }}" class="formules-link">Voir tous les détails et comparatifs →</a>
+                Engagement 24 mois. <a href="{{ path('app_offers') }}" class="formules-link">Voir tous les détails →</a>
             </p>
         </div>
     </section>
@@ -304,10 +267,8 @@
             <div class="newsletter-badge">Guide Gratuit</div>
             <div class="newsletter-content">
                 <div class="newsletter-text">
-                    <h2 class="newsletter-title">
-                        Téléchargez gratuitement :<br>
-                        <span class="newsletter-title-highlight">Les 10 erreurs qui font fuir vos clients en ligne</span>
-                    </h2>
+                    <p class="newsletter-eyebrow">Téléchargez gratuitement</p>
+                    <h2 class="newsletter-title">Les 10 erreurs qui font fuir vos clients en ligne</h2>
                     <ul class="newsletter-benefits">
                         <li>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
