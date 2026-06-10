@@ -1714,8 +1714,8 @@ body {
 
 .newsletter-badge {
     display: inline-block;
-    background: #f3f6fb;
-    color: #0066ff;
+    background: #eef3ff;
+    color: #0052cc;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 1.4px;
@@ -1732,17 +1732,25 @@ body {
     align-items: center;
 }
 
-.newsletter-title {
-    font-size: 28px;
+.newsletter-eyebrow {
+    font-size: 0.8rem;
     font-weight: 500;
-    color: #151b2b;
-    line-height: 1.35;
+    color: #6b7280;
+    margin: 0 0 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.newsletter-title {
+    font-size: 36px;
+    font-weight: 400;
+    color: #1a1a1a;
+    line-height: 1.25;
     margin: 0 0 28px;
 }
 
 .newsletter-title-highlight {
-    font-weight: 600;
-    color: #0066ff;
+    color: #1a1a1a;
 }
 
 .newsletter-benefits {
@@ -1760,7 +1768,7 @@ body {
     gap: 10px;
     font-size: 15px;
     line-height: 1.5;
-    color: #3f4a5f;
+    color: #374151;
 }
 
 .newsletter-benefits li svg {
@@ -1770,18 +1778,18 @@ body {
 }
 
 .newsletter-form-wrapper {
-    background: #fbfcff;
-    border: 1px solid #e7edf7;
+    background: #fff;
+    border: 1px solid #e5e7eb;
     border-radius: 16px;
     padding: 36px;
-    box-shadow: 0 8px 28px rgba(17, 24, 39, 0.06);
+    box-shadow: none;
 }
 
 .newsletter-label {
     display: block;
     font-size: 13px;
     font-weight: 500;
-    color: #2b3448;
+    color: #374151;
     margin-bottom: 10px;
 }
 
@@ -1794,10 +1802,10 @@ body {
 .newsletter-input {
     width: 100%;
     padding: 14px 16px;
-    border: 1px solid #d7deea;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
     font-size: 15px;
-    color: #1f2937;
+    color: #1a1a1a;
     background: #ffffff;
     box-sizing: border-box;
     transition: border-color 0.2s;

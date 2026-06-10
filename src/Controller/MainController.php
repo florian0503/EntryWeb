@@ -43,9 +43,11 @@ final class MainController extends AbstractController
     }
 
     #[Route('/offres', name: 'app_offers')]
-    public function offers(): Response
+    public function offers(RealisationRepository $realisationRepository): Response
     {
-        return $this->render('pages/offers.html.twig');
+        return $this->render('pages/offers.html.twig', [
+            'realisationsCount' => count($realisationRepository->findPublished()),
+        ]);
     }
 
     #[Route('/realisations', name: 'app_portfolio')]
