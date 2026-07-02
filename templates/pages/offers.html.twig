@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Offres et Tarifs — EntryWeb{% endblock %}
-{% block meta_description %}Création de site web professionnel jusqu'à 5 pages à 995,90€ HT. Hébergement, maintenance et sécurité inclus dès 69,90€ HT/mois.{% endblock %}
+{% block meta_description %}Création de site web professionnel jusqu'à 5 pages à 990€ HT. Hébergement, maintenance et sécurité inclus dès 69,90€ HT/mois.{% endblock %}
 
 {% block body %}
 <style>
@@ -88,6 +88,73 @@
     background: #eef3ff;
 }
 
+/* ── Pourquoi nous ──────────────────────────────────────────── */
+.why-us {
+    padding: 5rem 1.5rem;
+    background: #fff;
+}
+.why-us-inner {
+    max-width: 860px;
+    margin: 0 auto;
+}
+.why-us-header {
+    margin-bottom: 3rem;
+}
+.why-us-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #0066ff;
+    margin: 0 0 0.75rem;
+}
+.why-us-title {
+    font-size: 2rem;
+    font-weight: 400;
+    color: #111;
+    margin: 0;
+    line-height: 1.2;
+}
+.why-us-list {
+    display: flex;
+    flex-direction: column;
+}
+.why-us-row {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 0 2rem;
+    padding: 2rem 0;
+    border-top: 1px solid #e5e7eb;
+    align-items: start;
+}
+.why-us-row:last-child {
+    border-bottom: 1px solid #e5e7eb;
+}
+.why-us-num {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #d1d5db;
+    letter-spacing: 0.05em;
+    padding-top: 3px;
+}
+.why-us-content {}
+.why-us-row-title {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #111;
+    margin: 0 0 0.4rem;
+}
+.why-us-row-desc {
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.7;
+    margin: 0;
+}
+@media (max-width: 600px) {
+    .why-us-row { grid-template-columns: 40px 1fr; gap: 0 1rem; }
+    .why-us-title { font-size: 1.5rem; }
+}
+
 /* ── FAQ ─────────────────────────────────────────────────────── */
 .faq-wrap {
     max-width: 700px;
@@ -146,7 +213,7 @@
                     <h2 class="offer-card-title">Site web professionnel</h2>
                     <p class="offer-card-subtitle">Jusqu'à 5 pages · Design sur mesure · Livraison 5 semaines</p>
                     <div class="offer-card-price">
-                        <span class="price-amount">995,90€<sup>HT</sup></span>
+                        <span class="price-amount">990€<sup>HT</sup></span>
                         <span class="price-type">frais de mise en service (une seule fois)</span>
                     </div>
                 </div>
@@ -202,6 +269,53 @@
             <p style="font-size:0.75rem;color:#9ca3af;margin-top:0.65rem;">Échange gratuit · Sans engagement initial · Réponse sous 24h</p>
         </div>
 
+    </section>
+
+    {# ── Pourquoi nous choisir ── #}
+    <section class="why-us">
+        <div class="why-us-inner">
+            <div class="why-us-header swiss-fade-up" data-scroll-animation-target="item">
+                <p class="why-us-label">Nos engagements</p>
+                <h2 class="why-us-title">Pourquoi choisir EntryWeb ?</h2>
+            </div>
+            <div class="why-us-list">
+                <div class="why-us-row swiss-fade-up" data-scroll-animation-target="item" data-delay="0">
+                    <span class="why-us-num">01</span>
+                    <div class="why-us-content">
+                        <p class="why-us-row-title">100% codé sur mesure</p>
+                        <p class="why-us-row-desc">Pas de WordPress, pas de template acheté en ligne. Votre site est développé de A à Z — performances optimales, sécurité renforcée et une identité vraiment unique.</p>
+                    </div>
+                </div>
+                <div class="why-us-row swiss-fade-up" data-scroll-animation-target="item" data-delay="50">
+                    <span class="why-us-num">02</span>
+                    <div class="why-us-content">
+                        <p class="why-us-row-title">Votre propriété après 24 mois</p>
+                        <p class="why-us-row-desc">Au bout de 24 mensualités, le code source vous appartient intégralement. Vous pouvez l'héberger où vous voulez et le faire évoluer librement, sans dépendre de nous.</p>
+                    </div>
+                </div>
+                <div class="why-us-row swiss-fade-up" data-scroll-animation-target="item" data-delay="100">
+                    <span class="why-us-num">03</span>
+                    <div class="why-us-content">
+                        <p class="why-us-row-title">Interface d'administration</p>
+                        <p class="why-us-row-desc">Gérez vos contenus en toute autonomie : textes, images, articles de blog… sans avoir besoin de nous contacter pour chaque modification.</p>
+                    </div>
+                </div>
+                <div class="why-us-row swiss-fade-up" data-scroll-animation-target="item" data-delay="150">
+                    <span class="why-us-num">04</span>
+                    <div class="why-us-content">
+                        <p class="why-us-row-title">Prix concurrentiels</p>
+                        <p class="why-us-row-desc">990€ HT de mise en service, là où la plupart des agences facturent 3 à 5× plus pour un résultat équivalent. Pas de mauvaise surprise, pas de frais cachés.</p>
+                    </div>
+                </div>
+                <div class="why-us-row swiss-fade-up" data-scroll-animation-target="item" data-delay="200">
+                    <span class="why-us-num">05</span>
+                    <div class="why-us-content">
+                        <p class="why-us-row-title">Livré en 30 jours ouvrés</p>
+                        <p class="why-us-row-desc">On s'engage sur un délai réaliste et tenu. Votre site est en ligne en moins de 6 semaines calendaires après le lancement du projet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     {# ── FAQ ── #}
