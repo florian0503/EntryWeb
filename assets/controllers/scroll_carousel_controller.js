@@ -4,34 +4,34 @@ export default class extends Controller {
     static targets = ['track'];
 
     connect() {
+        this.isHovered = false;
         this.onWheel = this.onWheel.bind(this);
-        document.addEventListener('wheel', this.onWheel, { passive: false });
+        this.onEnter = () => { this.isHovered = true; };
+        this.onLeave = () => { this.isHovered = false; };
+
+        this.element.addEventListener('wheel', this.onWheel, { passive: false });
+        this.element.addEventListener('mouseenter', this.onEnter);
+        this.element.addEventListener('mouseleave', this.onLeave);
     }
 
     disconnect() {
-        document.removeEventListener('wheel', this.onWheel);
+        this.element.removeEventListener('wheel', this.onWheel);
+        this.element.removeEventListener('mouseenter', this.onEnter);
+        this.element.removeEventListener('mouseleave', this.onLeave);
     }
 
     onWheel(e) {
+        if (!this.isHovered) return;
+
         const track = this.trackTarget;
-        const rect = this.element.getBoundingClientRect();
-
-        // Check if section is visible
-        if (rect.top > window.innerHeight * 0.5 || rect.bottom < window.innerHeight * 0.5) {
-            return;
-        }
-
         const maxScroll = track.scrollWidth - track.clientWidth;
         const atStart = track.scrollLeft <= 0;
         const atEnd = track.scrollLeft >= maxScroll - 1;
 
-        // Scroll down but not at end
         if (e.deltaY > 0 && !atEnd) {
             e.preventDefault();
             track.scrollLeft += Math.abs(e.deltaY);
-        }
-        // Scroll up but not at start
-        else if (e.deltaY < 0 && !atStart) {
+        } else if (e.deltaY < 0 && !atStart) {
             e.preventDefault();
             track.scrollLeft -= Math.abs(e.deltaY);
         }
