@@ -179,7 +179,10 @@
 {% endblock %}
 
 {% block body %}
-<div class="preview-topbar">
+<div
+    data-controller="realisation-preview"
+    class="preview-topbar"
+>
     <a href="{{ path('app_portfolio') }}" class="preview-back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"/>
@@ -190,17 +193,35 @@
     <span class="preview-title">{{ realisation.title }}</span>
 
     <div class="preview-devices">
-        <button class="preview-device-btn is-active" data-device="desktop" title="Ordinateur">
+        <button
+            class="preview-device-btn is-active"
+            data-device="desktop"
+            data-realisation-preview-target="deviceBtn"
+            data-action="click->realisation-preview#switchDevice"
+            title="Ordinateur"
+        >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
         </button>
-        <button class="preview-device-btn" data-device="tablet" title="Tablette">
+        <button
+            class="preview-device-btn"
+            data-device="tablet"
+            data-realisation-preview-target="deviceBtn"
+            data-action="click->realisation-preview#switchDevice"
+            title="Tablette"
+        >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
             </svg>
         </button>
-        <button class="preview-device-btn" data-device="phone" title="Mobile">
+        <button
+            class="preview-device-btn"
+            data-device="phone"
+            data-realisation-preview-target="deviceBtn"
+            data-action="click->realisation-preview#switchDevice"
+            title="Mobile"
+        >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
             </svg>
@@ -219,7 +240,10 @@
 </div>
 
 <div class="preview-stage">
-    <div class="preview-browser device-desktop" id="previewBrowser">
+    <div
+        class="preview-browser device-desktop"
+        data-realisation-preview-target="browser"
+    >
         <div class="preview-browser-chrome">
             <div class="preview-browser-dots">
                 <span></span><span></span><span></span>
@@ -230,13 +254,14 @@
         {% if realisation.url %}
             <iframe
                 class="preview-browser-iframe"
-                id="previewIframe"
                 src="{{ realisation.url }}"
                 title="{{ realisation.title }}"
                 loading="lazy"
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                data-realisation-preview-target="iframe"
+                data-action="load->realisation-preview#iframeLoaded error->realisation-preview#iframeError"
             ></iframe>
-            <div class="preview-blocked" id="previewBlocked">
+            <div class="preview-blocked" data-realisation-preview-target="blocked">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
                 </svg>
@@ -253,39 +278,4 @@
         {% endif %}
     </div>
 </div>
-
-<script>
-(function () {
-    const browser = document.getElementById('previewBrowser');
-    const iframe  = document.getElementById('previewIframe');
-    const blocked = document.getElementById('previewBlocked');
-    const btns    = document.querySelectorAll('.preview-device-btn');
-
-    btns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            btns.forEach(b => b.classList.remove('is-active'));
-            btn.classList.add('is-active');
-            const device = btn.dataset.device;
-            browser.className = 'preview-browser device-' + device;
-        });
-    });
-
-    if (iframe) {
-        iframe.addEventListener('load', () => {
-            try {
-                const doc = iframe.contentDocument || iframe.contentWindow.document;
-                if (!doc || doc.URL === 'about:blank') throw new Error();
-            } catch {
-                iframe.style.display = 'none';
-                if (blocked) blocked.style.display = 'flex';
-            }
-        });
-
-        iframe.addEventListener('error', () => {
-            iframe.style.display = 'none';
-            if (blocked) blocked.style.display = 'flex';
-        });
-    }
-})();
-</script>
 {% endblock %}

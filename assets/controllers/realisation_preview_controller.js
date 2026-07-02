@@ -1,0 +1,29 @@
+import { Controller } from '@hotwired/stimulus';
+
+export default class extends Controller {
+    static targets = ['browser', 'iframe', 'blocked', 'deviceBtn'];
+
+    switchDevice(event) {
+        const device = event.currentTarget.dataset.device;
+
+        this.deviceBtnTargets.forEach(btn => btn.classList.remove('is-active'));
+        event.currentTarget.classList.add('is-active');
+
+        this.browserTarget.className = 'preview-browser device-' + device;
+    }
+
+    iframeLoaded() {
+        try {
+            const doc = this.iframeTarget.contentDocument || this.iframeTarget.contentWindow.document;
+            if (!doc || doc.URL === 'about:blank') throw new Error();
+        } catch {
+            this.iframeTarget.style.display = 'none';
+            if (this.hasBlockedTarget) this.blockedTarget.style.display = 'flex';
+        }
+    }
+
+    iframeError() {
+        this.iframeTarget.style.display = 'none';
+        if (this.hasBlockedTarget) this.blockedTarget.style.display = 'flex';
+    }
+}
