@@ -179,10 +179,8 @@
 {% endblock %}
 
 {% block body %}
-<div
-    data-controller="realisation-preview"
-    class="preview-topbar"
->
+<div data-controller="realisation-preview">
+<div class="preview-topbar">
     <a href="{{ path('app_portfolio') }}" class="preview-back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"/>
@@ -277,5 +275,6 @@
             </div>
         {% endif %}
     </div>
+</div>
 </div>
 {% endblock %}
