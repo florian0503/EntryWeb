@@ -12,16 +12,6 @@ export default class extends Controller {
         this.browserTarget.className = 'preview-browser device-' + device;
     }
 
-    iframeLoaded() {
-        try {
-            const doc = this.iframeTarget.contentDocument || this.iframeTarget.contentWindow.document;
-            if (!doc || doc.URL === 'about:blank') throw new Error();
-        } catch {
-            this.iframeTarget.style.display = 'none';
-            if (this.hasBlockedTarget) this.blockedTarget.style.display = 'flex';
-        }
-    }
-
     iframeError() {
         this.iframeTarget.style.display = 'none';
         if (this.hasBlockedTarget) this.blockedTarget.style.display = 'flex';
