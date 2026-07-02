@@ -306,6 +306,11 @@ body {
     justify-content: center;
     gap: 0.75rem;
     margin-bottom: 2.5rem;
+    position: sticky;
+    top: 76px;
+    background: #fff;
+    z-index: 90;
+    padding: 16px 0;
 }
 
 .realisations-filter-btn {

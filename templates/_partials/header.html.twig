@@ -72,14 +72,16 @@
                 <li class="nav-item">
                     <a href="{{ path('app_offers') }}" class="nav-link {% if app.request.get('_route') == 'app_offers' %}active{% endif %}">Offres</a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ path('app_portfolio') }}" class="nav-link {% if app.request.get('_route') in ['app_portfolio', 'app_realisation_show'] %}active{% endif %}">Réalisations</a>
+                </li>
                 <li class="nav-item nav-dropdown">
-                    <span class="nav-link nav-dropdown-toggle {% if app.request.get('_route') in ['app_portfolio', 'app_about', 'app_parrainage'] or app.request.get('_route') starts with 'app_blog' %}active{% endif %}" data-action="click->mobile-menu#toggleDropdown">
+                    <span class="nav-link nav-dropdown-toggle {% if app.request.get('_route') in ['app_about', 'app_parrainage'] or app.request.get('_route') starts with 'app_blog' %}active{% endif %}" data-action="click->mobile-menu#toggleDropdown">
                         Entreprise
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
                     </span>
                     <div class="nav-dropdown-menu">
                         <a href="{{ path('app_about') }}" class="{% if app.request.get('_route') == 'app_about' %}active{% endif %}">À propos</a>
-                        <a href="{{ path('app_portfolio') }}" class="{% if app.request.get('_route') == 'app_portfolio' %}active{% endif %}">Réalisations</a>
                         <a href="{{ path('app_parrainage') }}" class="{% if app.request.get('_route') == 'app_parrainage' %}active{% endif %}">Parrainage</a>
                         <a href="{{ path('app_blog') }}" class="{% if app.request.get('_route') starts with 'app_blog' %}active{% endif %}">Blog</a>
                     </div>
