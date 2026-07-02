@@ -26,24 +26,22 @@
             <div class="realisations-grid">
                 {% for realisation in realisations %}
                     <article class="realisations-card swiss-fade-up" data-category="{{ realisation.category.slug }}" data-scroll-animation-target="item" data-delay="{{ ((loop.index0 % 4) * 100) }}" data-realisations-filter-target="card">
-                        <div class="realisations-card-image">
+                        <a href="{{ path('app_realisation_show', {id: realisation.id}) }}" class="realisations-card-image">
                             {% if realisation.imageName %}
                                 <img src="{{ asset('uploads/realisations/' ~ realisation.imageName) }}" alt="{{ realisation.title }}" class="img-reveal">
                             {% else %}
                                 <img src="https://via.placeholder.com/600x400?text={{ realisation.title|url_encode }}" alt="{{ realisation.title }}" class="img-reveal">
                             {% endif %}
-                        </div>
+                        </a>
                         <div class="realisations-card-body">
                             <div class="realisations-card-header">
                                 <h2 class="realisations-card-title">{{ realisation.title }}</h2>
                                 <span class="realisations-card-tag">{{ realisation.category.name }}</span>
                             </div>
                             <p class="realisations-card-desc">{{ realisation.description|slice(0, 150) }}{% if realisation.description|length > 150 %}...{% endif %}</p>
-                            {% if realisation.url %}
-                                <a href="{{ realisation.url }}" target="_blank" rel="noopener" class="realisations-card-link">Voir le site
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                                </a>
-                            {% endif %}
+                            <a href="{{ path('app_realisation_show', {id: realisation.id}) }}" class="realisations-card-link">Voir la réalisation
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </a>
                         </div>
                     </article>
                 {% endfor %}

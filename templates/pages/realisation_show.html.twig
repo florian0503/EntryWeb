@@ -1,0 +1,291 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ realisation.title }} — EntryWeb{% endblock %}
+{% block meta_description %}Découvrez la réalisation {{ realisation.title }} réalisée par EntryWeb.{% endblock %}
+
+{% block stylesheets %}
+<style>
+    main {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 72px);
+        overflow: hidden;
+    }
+
+    .preview-topbar {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 20px;
+        background: #fff;
+        border-bottom: 1px solid #e5e7eb;
+        flex-shrink: 0;
+        z-index: 10;
+    }
+
+    .preview-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #6b7280;
+        text-decoration: none;
+        padding: 6px 10px;
+        border-radius: 6px;
+        transition: background 0.15s, color 0.15s;
+        flex-shrink: 0;
+    }
+    .preview-back:hover { background: #f3f4f6; color: #111; }
+    .preview-back svg { width: 16px; height: 16px; }
+
+    .preview-title {
+        flex: 1;
+        font-size: 15px;
+        font-weight: 600;
+        color: #111;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .preview-devices {
+        display: flex;
+        gap: 4px;
+        flex-shrink: 0;
+    }
+
+    .preview-device-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: none;
+        background: transparent;
+        border-radius: 6px;
+        color: #9ca3af;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+    }
+    .preview-device-btn:hover { background: #f3f4f6; color: #374151; }
+    .preview-device-btn.is-active { background: #eff6ff; color: #0066ff; }
+    .preview-device-btn svg { width: 20px; height: 20px; }
+
+    .preview-open-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #0066ff;
+        text-decoration: none;
+        padding: 6px 12px;
+        border: 1px solid #0066ff;
+        border-radius: 6px;
+        flex-shrink: 0;
+        transition: background 0.15s, color 0.15s;
+    }
+    .preview-open-link:hover { background: #0066ff; color: #fff; }
+    .preview-open-link svg { width: 14px; height: 14px; }
+
+    .preview-stage {
+        flex: 1;
+        background: #f1f5f9;
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+        overflow: hidden;
+        padding: 16px;
+        box-sizing: border-box;
+    }
+
+    .preview-browser {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+        overflow: hidden;
+        transition: max-width 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .preview-browser.device-desktop { max-width: 100%; }
+    .preview-browser.device-tablet  { max-width: 768px; }
+    .preview-browser.device-phone   { max-width: 390px; }
+
+    .preview-browser-chrome {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e5e7eb;
+        flex-shrink: 0;
+    }
+
+    .preview-browser-dots {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+    .preview-browser-dots span {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+    .preview-browser-dots span:nth-child(1) { background: #ff5f57; }
+    .preview-browser-dots span:nth-child(2) { background: #febc2e; }
+    .preview-browser-dots span:nth-child(3) { background: #28c840; }
+
+    .preview-browser-url {
+        flex: 1;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 5px 12px;
+        font-size: 12px;
+        color: #6b7280;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .preview-browser-iframe {
+        flex: 1;
+        border: none;
+        width: 100%;
+        min-height: 0;
+    }
+
+    .preview-blocked {
+        flex: 1;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        padding: 40px;
+        text-align: center;
+        color: #6b7280;
+    }
+    .preview-blocked svg { width: 48px; height: 48px; opacity: 0.4; }
+    .preview-blocked p { font-size: 14px; line-height: 1.6; margin: 0; }
+    .preview-blocked a { color: #0066ff; font-weight: 600; text-decoration: none; }
+    .preview-blocked a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="preview-topbar">
+    <a href="{{ path('app_portfolio') }}" class="preview-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Réalisations
+    </a>
+
+    <span class="preview-title">{{ realisation.title }}</span>
+
+    <div class="preview-devices">
+        <button class="preview-device-btn is-active" data-device="desktop" title="Ordinateur">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+        </button>
+        <button class="preview-device-btn" data-device="tablet" title="Tablette">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+        </button>
+        <button class="preview-device-btn" data-device="phone" title="Mobile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+        </button>
+    </div>
+
+    {% if realisation.url %}
+        <a href="{{ realisation.url }}" target="_blank" rel="noopener" class="preview-open-link">
+            Ouvrir
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+        </a>
+    {% endif %}
+</div>
+
+<div class="preview-stage">
+    <div class="preview-browser device-desktop" id="previewBrowser">
+        <div class="preview-browser-chrome">
+            <div class="preview-browser-dots">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="preview-browser-url">{{ realisation.url ?? 'entryweb.fr' }}</div>
+        </div>
+
+        {% if realisation.url %}
+            <iframe
+                class="preview-browser-iframe"
+                id="previewIframe"
+                src="{{ realisation.url }}"
+                title="{{ realisation.title }}"
+                loading="lazy"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            ></iframe>
+            <div class="preview-blocked" id="previewBlocked">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                </svg>
+                <p>Ce site ne peut pas être affiché en prévisualisation.<br>
+                <a href="{{ realisation.url }}" target="_blank" rel="noopener">Ouvrir {{ realisation.url }} dans un nouvel onglet</a></p>
+            </div>
+        {% else %}
+            <div class="preview-blocked" style="display:flex;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <p>Aucune URL renseignée pour cette réalisation.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+(function () {
+    const browser = document.getElementById('previewBrowser');
+    const iframe  = document.getElementById('previewIframe');
+    const blocked = document.getElementById('previewBlocked');
+    const btns    = document.querySelectorAll('.preview-device-btn');
+
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            btns.forEach(b => b.classList.remove('is-active'));
+            btn.classList.add('is-active');
+            const device = btn.dataset.device;
+            browser.className = 'preview-browser device-' + device;
+        });
+    });
+
+    if (iframe) {
+        iframe.addEventListener('load', () => {
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                if (!doc || doc.URL === 'about:blank') throw new Error();
+            } catch {
+                iframe.style.display = 'none';
+                if (blocked) blocked.style.display = 'flex';
+            }
+        });
+
+        iframe.addEventListener('error', () => {
+            iframe.style.display = 'none';
+            if (blocked) blocked.style.display = 'flex';
+        });
+    }
+})();
+</script>
+{% endblock %}

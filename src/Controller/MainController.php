@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\ContactMessage;
 use App\Entity\NewsletterSubscriber;
 use App\Entity\Parrainage;
+use App\Entity\Realisation;
 use App\Repository\CategoryRepository;
 use App\Repository\NewsletterSubscriberRepository;
 use App\Repository\ParrainageRepository;
@@ -382,6 +383,18 @@ final class MainController extends AbstractController
         $this->addFlash('newsletter_success', 'pdf_sent');
 
         return $this->redirectToRoute('app_home', ['_fragment' => 'newsletter']);
+    }
+
+    #[Route('/realisations/{id}', name: 'app_realisation_show', requirements: ['id' => '\d+'])]
+    public function realisationShow(Realisation $realisation): Response
+    {
+        if (!$realisation->isPublished()) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('pages/realisation_show.html.twig', [
+            'realisation' => $realisation,
+        ]);
     }
 
     #[Route('/faq', name: 'app_faq')]
