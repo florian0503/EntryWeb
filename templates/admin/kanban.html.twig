@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kanban prospection - EntryWeb Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
+    <style>
+        body { background: #f1f5f9; }
+        .top-bar { background: #2563eb; color: #fff; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .top-bar a { color: #fff; text-decoration: none; opacity: 0.8; }
+        .top-bar a:hover { opacity: 1; }
+
+        .ville-pill { border: 1px solid #cbd5e1; background: #fff; color: #334155; border-radius: 999px; padding: 6px 16px; text-decoration: none; font-size: 14px; transition: all 0.15s; white-space: nowrap; }
+        .ville-pill:hover { border-color: #2563eb; color: #2563eb; }
+        .ville-pill.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+        .ville-pill .badge { background: rgba(0,0,0,0.12); font-weight: 600; }
+        .ville-pill.active .badge { background: rgba(255,255,255,0.25); }
+
+        .geo-statut { font-size: 12px; color: #64748b; background: #e2e8f0; border-radius: 999px; padding: 4px 12px; white-space: nowrap; }
+        .geo-statut.actif { background: #dcfce7; color: #15803d; }
+        .geo-statut.erreur { background: #fee2e2; color: #b91c1c; }
+
+        .kanban-board { display: flex; gap: 14px; align-items: flex-start; overflow-x: auto; padding-bottom: 24px; }
+        .kanban-col { background: #e8edf3; border-radius: 12px; min-width: 265px; width: 265px; flex-shrink: 0; border-top: 4px solid var(--col-color); }
+        .kanban-col-header { display: flex; align-items: center; gap: 8px; padding: 12px 14px 8px; }
+        .kanban-col-header .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--col-color); }
+        .kanban-col-header .titre { font-weight: 700; font-size: 14px; color: #1e293b; }
+        .kanban-col-header .compteur { margin-left: auto; background: #fff; color: #475569; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 1px 9px; }
+
+        .kanban-col-body { padding: 6px 10px 12px; min-height: 120px; display: flex; flex-direction: column; gap: 8px; border-radius: 0 0 12px 12px; transition: background 0.15s; }
+        .kanban-col-body.drag-over { background: #dbeafe; outline: 2px dashed #2563eb; outline-offset: -4px; }
+        .kanban-col-body:empty::after { content: 'Glisser un prospect ici'; color: #94a3b8; font-size: 12px; text-align: center; padding: 30px 0; border: 1px dashed #cbd5e1; border-radius: 8px; }
+
+        .kanban-card { background: #fff; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.08); cursor: pointer; border-left: 3px solid var(--col-color); transition: box-shadow 0.15s, transform 0.15s; }
+        .kanban-card:hover { box-shadow: 0 4px 10px rgba(15,23,42,0.12); transform: translateY(-1px); }
+        .kanban-card.dragging { opacity: 0.4; cursor: grabbing; }
+        .kanban-card .nom { font-weight: 600; font-size: 14px; color: #0f172a; display: flex; justify-content: space-between; align-items: start; gap: 6px; }
+        .kanban-card .nom a { color: #94a3b8; font-size: 12px; }
+        .kanban-card .nom a:hover { color: #2563eb; }
+        .kanban-card .adresse { font-size: 12px; color: #64748b; margin-top: 2px; }
+        .kanban-card .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; font-size: 12px; align-items: center; }
+        .kanban-card .meta a { color: #2563eb; text-decoration: none; }
+        .kanban-card .meta .contact-date { color: #64748b; }
+        .kanban-card .notes { font-size: 12px; color: #475569; background: #f8fafc; border-radius: 6px; padding: 5px 8px; margin-top: 8px; }
+
+        .badge-distance { background: #dbeafe; color: #1d4ed8; font-weight: 600; font-size: 11px; border-radius: 999px; padding: 2px 8px; }
+
+        .col-a_contacter { --col-color: #64748b; }
+        .col-contacte { --col-color: #2563eb; }
+        .col-a_relancer { --col-color: #f59e0b; }
+        .col-interesse { --col-color: #8b5cf6; }
+        .col-client { --col-color: #16a34a; }
+        .col-pas_interesse { --col-color: #dc2626; }
+
+        .toast-erreur { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
+
+        .fiche-ligne { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        .fiche-ligne:last-child { border-bottom: none; }
+        .fiche-ligne .icone { width: 22px; color: #64748b; text-align: center; flex-shrink: 0; padding-top: 2px; }
+        .fiche-ligne .contenu { color: #1e293b; }
+        .fiche-ligne .contenu a { color: #2563eb; text-decoration: none; }
+        .fiche-notes { white-space: pre-wrap; background: #f8fafc; border-radius: 8px; padding: 10px 12px; }
+        .fiche-statut-badge { font-size: 12px; font-weight: 600; color: #fff; border-radius: 999px; padding: 3px 12px; }
+
+        .fiche-statuts { display: flex; flex-wrap: wrap; gap: 6px; }
+        .btn-statut { border: 1px solid #cbd5e1; background: #fff; color: #334155; border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .btn-statut.actif { color: #fff; border-color: transparent; }
+
+        @media (max-width: 576px) {
+            .top-bar { padding: 10px 14px; font-size: 14px; }
+            .container-fluid { padding-left: 12px !important; padding-right: 12px !important; }
+            .kanban-board { scroll-snap-type: x mandatory; gap: 10px; }
+            .kanban-col { min-width: 84vw; width: 84vw; scroll-snap-align: center; }
+            .kanban-card .nom { font-size: 15px; }
+            .kanban-card .meta a { padding: 2px 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="top-bar">
+    <div><strong>EntryWeb Admin</strong> &mdash; Kanban prospection</div>
+    <a href="{{ path('admin') }}"><i class="fa fa-arrow-left me-1"></i> Retour à l'admin</a>
+</div>
+
+<div class="container-fluid py-4 px-4">
+    {% if villes is empty %}
+        <div class="alert alert-info" style="max-width: 520px;">
+            <i class="fa fa-info-circle me-1"></i>
+            Aucune ville de prospection. Créez d'abord une ville dans l'admin.
+        </div>
+    {% else %}
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-4">
+            <span class="text-muted me-1" style="font-size: 14px;"><i class="fa fa-map-marker me-1"></i>Ville :</span>
+            {% for ville in villes %}
+                <a
+                    href="{{ path('admin_kanban', { ville: ville.id }) }}"
+                    class="ville-pill {{ villeActive and ville.id == villeActive.id ? 'active' : '' }}"
+                >
+                    {{ ville.nom }}
+                    <span class="badge rounded-pill ms-1">{{ ville.nombreProspects }}</span>
+                </a>
+            {% endfor %}
+            <span class="geo-statut ms-2" id="geo-statut"><i class="fa fa-location-crosshairs me-1"></i>Localisation...</span>
+            <a href="{{ newProspectUrl }}" class="btn btn-primary btn-sm ms-auto">
+                <i class="fa fa-plus me-1"></i>Nouveau prospect
+            </a>
+        </div>
+
+        <div class="kanban-board">
+            {% for colonne in colonnes %}
+                <div class="kanban-col col-{{ colonne.statut.value }}">
+                    <div class="kanban-col-header">
+                        <span class="dot"></span>
+                        <span class="titre">{{ colonne.statut.label }}</span>
+                        <span class="compteur" data-compteur="{{ colonne.statut.value }}">{{ colonne.prospects|length }}</span>
+                    </div>
+                    <div class="kanban-col-body" data-statut="{{ colonne.statut.value }}">
+                        {%- for prospect in colonne.prospects -%}
+                            <div
+                                class="kanban-card"
+                                draggable="true"
+                                data-id="{{ prospect.id }}"
+                                data-statut="{{ colonne.statut.value }}"
+                                data-url="{{ path('admin_kanban_statut', { id: prospect.id }) }}"
+                                {% if prospect.latitude is not null %}data-lat="{{ prospect.latitude }}" data-lng="{{ prospect.longitude }}"{% endif %}
+                            >
+                                <div class="nom">
+                                    <span>{{ prospect.nomBoite }}</span>
+                                    <a href="{{ editUrls[prospect.id] }}" title="Modifier le prospect"><i class="fa fa-pen"></i></a>
+                                </div>
+                                <div class="adresse">{{ prospect.adresse }}</div>
+                                <div class="meta">
+                                    {% if prospect.telephone %}
+                                        <a href="tel:{{ prospect.telephone }}"><i class="fa fa-phone me-1"></i>{{ prospect.telephone }}</a>
+                                    {% endif %}
+                                    {% if prospect.dateContact %}
+                                        <span class="contact-date"><i class="fa fa-clock me-1"></i>{{ prospect.dateContact|date('d/m/Y') }}</span>
+                                    {% endif %}
+                                </div>
+                                {% if prospect.notes %}
+                                    <div class="notes">{{ prospect.notes|length > 90 ? prospect.notes|slice(0, 90) ~ '…' : prospect.notes }}</div>
+                                {% endif %}
+                            </div>
+                        {%- endfor -%}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="fiche-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title mb-1" id="fiche-nom"></h5>
+                    <span class="fiche-statut-badge" id="fiche-statut"></span>
+                    <span class="badge-distance ms-1 d-none" id="fiche-distance"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body py-2">
+                <div class="fiche-ligne" id="ligne-adresse">
+                    <span class="icone"><i class="fa fa-location-dot"></i></span>
+                    <span class="contenu"><span id="fiche-adresse"></span> <a id="fiche-waze" href="#" target="_blank" class="ms-1" title="Ouvrir dans Waze"><i class="fa fa-route"></i> Waze</a></span>
+                </div>
+                <div class="fiche-ligne" id="ligne-telephone">
+                    <span class="icone"><i class="fa fa-phone"></i></span>
+                    <span class="contenu"><a id="fiche-telephone" href="#"></a></span>
+                </div>
+                <div class="fiche-ligne" id="ligne-horaires">
+                    <span class="icone"><i class="fa fa-clock"></i></span>
+                    <span class="contenu" id="fiche-horaires"></span>
+                </div>
+                <div class="fiche-ligne" id="ligne-site">
+                    <span class="icone"><i class="fa fa-globe"></i></span>
+                    <span class="contenu"><a id="fiche-site" href="#" target="_blank"></a></span>
+                </div>
+                <div class="fiche-ligne" id="ligne-contact">
+                    <span class="icone"><i class="fa fa-calendar-check"></i></span>
+                    <span class="contenu">Dernier contact : <span id="fiche-date-contact"></span></span>
+                </div>
+                <div class="fiche-ligne" id="ligne-notes">
+                    <span class="icone"><i class="fa fa-note-sticky"></i></span>
+                    <span class="contenu fiche-notes flex-grow-1" id="fiche-notes"></span>
+                </div>
+                <div class="py-2">
+                    <div class="text-muted mb-2" style="font-size: 12px;">Changer le statut :</div>
+                    <div class="fiche-statuts" id="fiche-statuts"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-outline-primary btn-sm" id="fiche-modifier"><i class="fa fa-pen me-1"></i>Modifier la fiche</a>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+    const csrfToken = '{{ csrf_token('kanban_statut') }}';
+    const fiches = {{ fichesJson|raw }};
+    const statuts = [
+        {% for colonne in colonnes %}
+        { value: '{{ colonne.statut.value }}', label: '{{ colonne.statut.label|e('js') }}' },
+        {% endfor %}
+    ];
+    const couleursStatut = {
+        a_contacter: '#64748b',
+        contacte: '#2563eb',
+        a_relancer: '#f59e0b',
+        interesse: '#8b5cf6',
+        client: '#16a34a',
+        pas_interesse: '#dc2626',
+    };
+    const distances = {};
+    let carteEnCours = null;
+    let ficheIdCourante = null;
+
+    function majCompteurs() {
+        document.querySelectorAll('.kanban-col-body').forEach((body) => {
+            const compteur = document.querySelector('[data-compteur="' + body.dataset.statut + '"]');
+            if (compteur) {
+                compteur.textContent = body.querySelectorAll('.kanban-card').length;
+            }
+        });
+    }
+
+    function afficherErreur(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-erreur alert alert-danger shadow';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    async function envoyerStatut(carte, nouveauStatut) {
+        const reponse = await fetch(carte.dataset.url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ statut: nouveauStatut, _token: csrfToken }),
+        });
+        const donnees = await reponse.json();
+        if (!reponse.ok || !donnees.ok) {
+            throw new Error(donnees.error || 'Erreur serveur');
+        }
+
+        carte.dataset.statut = nouveauStatut;
+        const fiche = fiches[carte.dataset.id];
+        if (fiche) {
+            fiche.statutValue = donnees.statut;
+            fiche.statutLabel = donnees.label;
+        }
+        const cible = document.querySelector('.kanban-col-body[data-statut="' + nouveauStatut + '"]');
+        if (cible) {
+            cible.appendChild(carte);
+        }
+        majCompteurs();
+    }
+
+    /* --- Drag & drop (desktop) --- */
+
+    document.addEventListener('dragstart', (e) => {
+        const carte = e.target.closest('.kanban-card');
+        if (!carte) return;
+        carteEnCours = carte;
+        carte.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+    });
+
+    document.addEventListener('dragend', () => {
+        if (carteEnCours) carteEnCours.classList.remove('dragging');
+        carteEnCours = null;
+        document.querySelectorAll('.drag-over').forEach((el) => el.classList.remove('drag-over'));
+    });
+
+    document.querySelectorAll('.kanban-col-body').forEach((body) => {
+        body.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            body.classList.add('drag-over');
+        });
+
+        body.addEventListener('dragleave', (e) => {
+            if (!body.contains(e.relatedTarget)) {
+                body.classList.remove('drag-over');
+            }
+        });
+
+        body.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            body.classList.remove('drag-over');
+            if (!carteEnCours) return;
+
+            const carte = carteEnCours;
+            const nouveauStatut = body.dataset.statut;
+            if (carte.dataset.statut === nouveauStatut) return;
+
+            try {
+                await envoyerStatut(carte, nouveauStatut);
+            } catch (erreur) {
+                afficherErreur('Impossible de déplacer le prospect : ' + erreur.message);
+            }
+        });
+    });
+
+    /* --- Géolocalisation et tri par proximité --- */
+
+    function distanceKm(lat1, lng1, lat2, lng2) {
+        const r = Math.PI / 180;
+        const a = Math.sin(((lat2 - lat1) * r) / 2) ** 2
+            + Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin(((lng2 - lng1) * r) / 2) ** 2;
+        return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function formatDistance(km) {
+        return km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1).replace('.', ',') + ' km';
+    }
+
+    function appliquerPosition(lat, lng) {
+        document.querySelectorAll('.kanban-card').forEach((carte) => {
+            if (carte.dataset.lat) {
+                distances[carte.dataset.id] = distanceKm(lat, lng, Number(carte.dataset.lat), Number(carte.dataset.lng));
+            }
+        });
+
+        const body = document.querySelector('.kanban-col-body[data-statut="a_contacter"]');
+        if (!body) return;
+
+        const cartes = [...body.querySelectorAll('.kanban-card')];
+        cartes.sort((a, b) => (distances[a.dataset.id] ?? Infinity) - (distances[b.dataset.id] ?? Infinity));
+        cartes.forEach((carte) => {
+            body.appendChild(carte);
+            const d = distances[carte.dataset.id];
+            if (d !== undefined && !carte.querySelector('.badge-distance')) {
+                const badge = document.createElement('span');
+                badge.className = 'badge-distance';
+                badge.innerHTML = '<i class="fa fa-location-arrow me-1"></i>' + formatDistance(d);
+                carte.querySelector('.meta').prepend(badge);
+            }
+        });
+    }
+
+    const geoStatut = document.getElementById('geo-statut');
+    if (geoStatut && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                appliquerPosition(pos.coords.latitude, pos.coords.longitude);
+                geoStatut.classList.add('actif');
+                geoStatut.innerHTML = '<i class="fa fa-location-crosshairs me-1"></i>Tri par proximité actif';
+            },
+            () => {
+                geoStatut.classList.add('erreur');
+                geoStatut.innerHTML = '<i class="fa fa-location-crosshairs me-1"></i>Localisation refusée';
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+        );
+    } else if (geoStatut) {
+        geoStatut.classList.add('erreur');
+        geoStatut.innerHTML = '<i class="fa fa-location-crosshairs me-1"></i>Localisation indisponible';
+    }
+
+    /* --- Fiche résumé au clic sur une carte --- */
+
+    const ficheModal = new bootstrap.Modal(document.getElementById('fiche-modal'));
+
+    function remplirLigne(idLigne, visible) {
+        document.getElementById(idLigne).style.display = visible ? '' : 'none';
+    }
+
+    function majEnTeteFiche(fiche) {
+        const statut = document.getElementById('fiche-statut');
+        statut.textContent = fiche.statutLabel;
+        statut.style.background = couleursStatut[fiche.statutValue] || '#64748b';
+    }
+
+    function rendreBoutonsStatut(id) {
+        const conteneur = document.getElementById('fiche-statuts');
+        conteneur.innerHTML = '';
+
+        statuts.forEach((s) => {
+            const bouton = document.createElement('button');
+            bouton.type = 'button';
+            bouton.className = 'btn-statut' + (s.value === fiches[id].statutValue ? ' actif' : '');
+            if (s.value === fiches[id].statutValue) {
+                bouton.style.background = couleursStatut[s.value];
+            }
+            bouton.textContent = s.label;
+            bouton.addEventListener('click', async () => {
+                if (s.value === fiches[id].statutValue) return;
+                const carte = document.querySelector('.kanban-card[data-id="' + id + '"]');
+                if (!carte) return;
+                try {
+                    await envoyerStatut(carte, s.value);
+                    majEnTeteFiche(fiches[id]);
+                    rendreBoutonsStatut(id);
+                } catch (erreur) {
+                    afficherErreur('Impossible de changer le statut : ' + erreur.message);
+                }
+            });
+            conteneur.appendChild(bouton);
+        });
+    }
+
+    function ouvrirFiche(id) {
+        const fiche = fiches[id];
+        if (!fiche) return;
+        ficheIdCourante = id;
+
+        document.getElementById('fiche-nom').textContent = fiche.nomBoite;
+        majEnTeteFiche(fiche);
+
+        const distance = document.getElementById('fiche-distance');
+        if (distances[id] !== undefined) {
+            distance.textContent = 'à ' + formatDistance(distances[id]);
+            distance.classList.remove('d-none');
+        } else {
+            distance.classList.add('d-none');
+        }
+
+        document.getElementById('fiche-adresse').textContent = fiche.adresse;
+        document.getElementById('fiche-waze').href = fiche.wazeUrl;
+
+        remplirLigne('ligne-telephone', !!fiche.telephone);
+        if (fiche.telephone) {
+            const tel = document.getElementById('fiche-telephone');
+            tel.textContent = fiche.telephone;
+            tel.href = 'tel:' + fiche.telephone;
+        }
+
+        remplirLigne('ligne-horaires', !!fiche.horaires);
+        if (fiche.horaires) document.getElementById('fiche-horaires').textContent = fiche.horaires;
+
+        const site = document.getElementById('fiche-site');
+        if (fiche.siteWebActuel) {
+            site.textContent = fiche.siteWebActuel;
+            site.href = fiche.siteWebActuel;
+            site.classList.remove('text-muted');
+        } else {
+            site.textContent = 'Pas de site web renseigné';
+            site.removeAttribute('href');
+            site.classList.add('text-muted');
+        }
+
+        remplirLigne('ligne-contact', !!fiche.dateContact);
+        if (fiche.dateContact) document.getElementById('fiche-date-contact').textContent = fiche.dateContact;
+
+        const notes = document.getElementById('fiche-notes');
+        notes.textContent = fiche.notes || 'Aucune note pour le moment';
+        notes.classList.toggle('text-muted', !fiche.notes);
+
+        rendreBoutonsStatut(id);
+
+        document.getElementById('fiche-modifier').href = fiche.editUrl;
+
+        ficheModal.show();
+    }
+
+    document.addEventListener('click', (e) => {
+        const carte = e.target.closest('.kanban-card');
+        if (!carte || e.target.closest('a')) return;
+        ouvrirFiche(carte.dataset.id);
+    });
+</script>
+</body>
+</html>

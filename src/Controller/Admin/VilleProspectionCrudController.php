@@ -41,14 +41,7 @@ class VilleProspectionCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $voirProspects = Action::new('voirProspects', 'Voir les prospects', 'fa fa-users')
-            ->linkToUrl(function (VilleProspection $ville): string {
-                return $this->adminUrlGenerator
-                    ->setController(ProspectCrudController::class)
-                    ->setAction(Action::INDEX)
-                    ->set('filters[ville][value]', (string) ($ville->getId() ?? 0))
-                    ->set('filters[ville][comparison]', '=')
-                    ->generateUrl();
-            })
+            ->linkToUrl(fn (VilleProspection $ville): string => $this->getProspectsUrl($ville))
             ->addCssClass('btn btn-info');
 
         return $actions
@@ -61,7 +54,15 @@ class VilleProspectionCrudController extends AbstractCrudController
         yield IdField::new('id')->onlyOnIndex();
 
         yield TextField::new('nom', 'Ville')
-            ->setRequired(true);
+            ->setRequired(true)
+            ->formatValue(function (mixed $value, VilleProspection $ville): string {
+                return sprintf(
+                    '<a href="%s" title="Ouvrir le kanban de cette ville">%s</a>',
+                    $this->generateUrl('admin_kanban', ['ville' => $ville->getId()]),
+                    htmlspecialchars((string) $value)
+                );
+            })
+            ->renderAsHtml();
 
         yield TextField::new('codePostal', 'Code postal')
             ->setRequired(true);
@@ -69,5 +70,15 @@ class VilleProspectionCrudController extends AbstractCrudController
         yield Field::new('nombreProspects', 'Nb prospects')
             ->onlyOnIndex()
             ->setTemplatePath('admin/field/nombre_prospects.html.twig');
+    }
+
+    private function getProspectsUrl(VilleProspection $ville): string
+    {
+        return $this->adminUrlGenerator
+            ->setController(ProspectCrudController::class)
+            ->setAction(Action::INDEX)
+            ->set('filters[ville][value]', (string) ($ville->getId() ?? 0))
+            ->set('filters[ville][comparison]', '=')
+            ->generateUrl();
     }
 }

@@ -10,7 +10,6 @@ use App\Entity\Client;
 use App\Entity\ContactMessage;
 use App\Entity\Devis;
 use App\Entity\NewsletterSubscriber;
-use App\Entity\Prospect;
 use App\Entity\Realisation;
 use App\Entity\VilleProspection;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
@@ -81,7 +80,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::section('Prospection');
         yield MenuItem::linkToCrud('Villes', 'fa fa-map-marker', VilleProspection::class);
-        yield MenuItem::linkToCrud('Prospects', 'fa fa-binoculars', Prospect::class);
         yield MenuItem::section('Clients');
         yield MenuItem::linkToCrud('Base de données clients', 'fa fa-users', Client::class);
         yield MenuItem::section('Devis');

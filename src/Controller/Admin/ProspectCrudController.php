@@ -8,6 +8,7 @@ use App\Entity\Prospect;
 use App\Entity\VilleProspection;
 use App\Enum\StatutProspect;
 use App\Repository\ProspectRepository;
+use App\Service\GeocodingService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -25,6 +26,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -36,6 +38,7 @@ class ProspectCrudController extends AbstractCrudController
         private readonly ProspectRepository $prospectRepository,
         private readonly EntityManagerInterface $em,
         private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly GeocodingService $geocodingService,
     ) {
     }
 
@@ -140,9 +143,10 @@ class ProspectCrudController extends AbstractCrudController
             ->renderAsBadges([
                 'a_contacter' => 'secondary',
                 'contacte' => 'primary',
-                'interesse' => 'warning',
-                'pas_interesse' => 'danger',
+                'a_relancer' => 'warning',
+                'interesse' => 'info',
                 'client' => 'success',
+                'pas_interesse' => 'danger',
             ]);
 
         yield TextField::new('siteWebActuel', 'Site web actuel')
@@ -235,6 +239,41 @@ class ProspectCrudController extends AbstractCrudController
         return $url->generateUrl();
     }
 
+    public function createEntity(string $entityFqcn): Prospect
+    {
+        $prospect = new Prospect();
+
+        $villeId = $this->getContext()?->getRequest()->query->getInt('ville') ?? 0;
+        if ($villeId > 0) {
+            $ville = $this->em->getRepository(VilleProspection::class)->find($villeId);
+            if (null !== $ville) {
+                $prospect->setVille($ville);
+            }
+        }
+
+        return $prospect;
+    }
+
+    /**
+     * @param AdminContext<Prospect> $context
+     */
+    protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
+    {
+        $request = $context->getRequest();
+        $ea = $request->request->all('ea');
+        $bouton = $ea['newForm']['btn'] ?? $ea['editForm']['btn'] ?? Action::SAVE_AND_RETURN;
+
+        if ('kanban' === $request->query->get('retour') && Action::SAVE_AND_RETURN === $bouton) {
+            /** @var Prospect $prospect */
+            $prospect = $context->getEntity()->getInstance();
+            $villeId = $prospect->getVille()?->getId() ?? $request->query->getInt('ville');
+
+            return $this->redirectToRoute('admin_kanban', $villeId > 0 ? ['ville' => $villeId] : []);
+        }
+
+        return parent::getRedirectResponseAfterSave($context, $action);
+    }
+
     public function persistEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
         /** @var Prospect $entityInstance */
@@ -243,6 +282,16 @@ class ProspectCrudController extends AbstractCrudController
             $entityInstance->setPosition($this->prospectRepository->findNextPosition($ville));
         }
 
+        $this->geocodingService->geocodeProspect($entityInstance);
+
         parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
+    {
+        /* @var Prospect $entityInstance */
+        $this->geocodingService->geocodeProspect($entityInstance);
+
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }
