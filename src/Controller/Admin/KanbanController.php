@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Prospect;
 use App\Enum\StatutProspect;
+use App\Repository\ProspectRepository;
 use App\Repository\VilleProspectionRepository;
 use App\Service\GeocodingService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,11 +28,13 @@ class KanbanController extends AbstractController
     public function index(
         Request $request,
         VilleProspectionRepository $villeRepository,
+        ProspectRepository $prospectRepository,
         AdminUrlGenerator $urlGenerator,
         GeocodingService $geocodingService,
         EntityManagerInterface $em,
     ): Response {
         $villes = $villeRepository->findBy([], ['nom' => 'ASC']);
+        $relancesEnRetard = $prospectRepository->countRelancesEnRetardParVille();
 
         $villeId = $request->query->getInt('ville');
         $villeActive = null;
@@ -74,6 +77,7 @@ class KanbanController extends AbstractController
                     ->setController(ProspectCrudController::class)
                     ->setAction(Action::EDIT)
                     ->setEntityId($prospect->getId())
+                    ->set('retour', 'kanban')
                     ->generateUrl();
                 $editUrls[$prospect->getId()] = $editUrl;
                 $fiches[$prospect->getId()] = [
@@ -87,6 +91,11 @@ class KanbanController extends AbstractController
                     'siteWebActuel' => $prospect->getSiteWebActuel(),
                     'notes' => $prospect->getNotes(),
                     'dateContact' => $prospect->getDateContact()?->format('d/m/Y'),
+                    'dateRelance' => $prospect->getDateRelance()?->format('d/m/Y'),
+                    'dateRelanceIso' => $prospect->getDateRelance()?->format('Y-m-d'),
+                    'relanceEnRetard' => $prospect->isRelanceEnRetard(),
+                    'lat' => $prospect->getLatitude(),
+                    'lng' => $prospect->getLongitude(),
                     'editUrl' => $editUrl,
                 ];
             }
@@ -112,6 +121,7 @@ class KanbanController extends AbstractController
             'villeActive' => $villeActive,
             'colonnes' => $colonnes,
             'editUrls' => $editUrls,
+            'relancesEnRetard' => $relancesEnRetard,
             'newProspectUrl' => $newProspectUrl,
             'fichesJson' => json_encode($fiches, \JSON_HEX_TAG | \JSON_HEX_APOS | \JSON_HEX_QUOT | \JSON_HEX_AMP | \JSON_THROW_ON_ERROR),
             'statutsJson' => json_encode($statuts, \JSON_HEX_TAG | \JSON_HEX_APOS | \JSON_HEX_QUOT | \JSON_HEX_AMP | \JSON_THROW_ON_ERROR),
@@ -127,7 +137,7 @@ class KanbanController extends AbstractController
         /** @var array{statut?: string, _token?: string} $data */
         $data = json_decode($request->getContent(), true) ?: [];
 
-        if (!$this->isCsrfTokenValid('kanban_statut', $data['_token'] ?? null)) {
+        if (!$this->isCsrfTokenValid('kanban', $data['_token'] ?? null)) {
             return new JsonResponse(['error' => 'Token CSRF invalide.'], Response::HTTP_FORBIDDEN);
         }
 
@@ -137,12 +147,80 @@ class KanbanController extends AbstractController
         }
 
         $prospect->setStatut($statut);
+        if (StatutProspect::AContacter !== $statut) {
+            $prospect->setDateContact(new \DateTime('today'));
+        }
         $em->flush();
 
         return new JsonResponse([
             'ok' => true,
             'statut' => $statut->value,
             'label' => $statut->label(),
+            'dateContact' => $prospect->getDateContact()?->format('d/m/Y'),
+            'relanceEnRetard' => $prospect->isRelanceEnRetard(),
+        ]);
+    }
+
+    #[Route('/admin/kanban/prospect/{id}/note', name: 'admin_kanban_note', methods: ['POST'])]
+    public function ajouterNote(
+        Prospect $prospect,
+        Request $request,
+        EntityManagerInterface $em,
+    ): JsonResponse {
+        /** @var array{note?: string, _token?: string} $data */
+        $data = json_decode($request->getContent(), true) ?: [];
+
+        if (!$this->isCsrfTokenValid('kanban', $data['_token'] ?? null)) {
+            return new JsonResponse(['error' => 'Token CSRF invalide.'], Response::HTTP_FORBIDDEN);
+        }
+
+        $note = trim($data['note'] ?? '');
+        if ('' === $note) {
+            return new JsonResponse(['error' => 'Note vide.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $ligne = sprintf('[%s] %s', (new \DateTimeImmutable())->format('d/m/Y'), $note);
+        $notes = $prospect->getNotes();
+        $prospect->setNotes(null === $notes || '' === $notes ? $ligne : $notes."\n".$ligne);
+        $em->flush();
+
+        return new JsonResponse([
+            'ok' => true,
+            'notes' => $prospect->getNotes(),
+        ]);
+    }
+
+    #[Route('/admin/kanban/prospect/{id}/relance', name: 'admin_kanban_relance', methods: ['POST'])]
+    public function updateRelance(
+        Prospect $prospect,
+        Request $request,
+        EntityManagerInterface $em,
+    ): JsonResponse {
+        /** @var array{date?: string, _token?: string} $data */
+        $data = json_decode($request->getContent(), true) ?: [];
+
+        if (!$this->isCsrfTokenValid('kanban', $data['_token'] ?? null)) {
+            return new JsonResponse(['error' => 'Token CSRF invalide.'], Response::HTTP_FORBIDDEN);
+        }
+
+        $dateStr = trim($data['date'] ?? '');
+        if ('' === $dateStr) {
+            $prospect->setDateRelance(null);
+        } else {
+            $date = \DateTime::createFromFormat('Y-m-d', $dateStr);
+            if (false === $date) {
+                return new JsonResponse(['error' => 'Date invalide.'], Response::HTTP_BAD_REQUEST);
+            }
+            $date->setTime(0, 0);
+            $prospect->setDateRelance($date);
+        }
+        $em->flush();
+
+        return new JsonResponse([
+            'ok' => true,
+            'dateRelance' => $prospect->getDateRelance()?->format('d/m/Y'),
+            'dateRelanceIso' => $prospect->getDateRelance()?->format('Y-m-d'),
+            'relanceEnRetard' => $prospect->isRelanceEnRetard(),
         ]);
     }
 }

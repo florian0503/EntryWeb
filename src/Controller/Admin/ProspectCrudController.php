@@ -12,6 +12,7 @@ use App\Service\GeocodingService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -55,6 +56,11 @@ class ProspectCrudController extends AbstractCrudController
             ->setSearchFields(['nomBoite', 'adresse', 'telephone', 'notes'])
             ->setDefaultSort(['position' => 'ASC'])
             ->setPaginatorPageSize(50);
+    }
+
+    public function configureAssets(Assets $assets): Assets
+    {
+        return $assets->addAssetMapperEntry('prospect-form');
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -168,6 +174,10 @@ class ProspectCrudController extends AbstractCrudController
             ->setNumOfRows(4);
 
         yield DateField::new('dateContact', 'Dernier contact')
+            ->setRequired(false)
+            ->setFormat('dd/MM/yyyy');
+
+        yield DateField::new('dateRelance', 'À relancer le')
             ->setRequired(false)
             ->setFormat('dd/MM/yyyy');
 

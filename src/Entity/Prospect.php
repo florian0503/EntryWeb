@@ -41,6 +41,9 @@ class Prospect
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateContact = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $dateRelance = null;
+
     #[ORM\Column(nullable: true)]
     private ?float $latitude = null;
 
@@ -166,6 +169,31 @@ class Prospect
         $this->dateContact = $dateContact;
 
         return $this;
+    }
+
+    public function getDateRelance(): ?\DateTimeInterface
+    {
+        return $this->dateRelance;
+    }
+
+    public function setDateRelance(?\DateTimeInterface $dateRelance): static
+    {
+        $this->dateRelance = $dateRelance;
+
+        return $this;
+    }
+
+    public function isRelanceEnRetard(): bool
+    {
+        if (null === $this->dateRelance) {
+            return false;
+        }
+
+        if (\in_array($this->statut, [StatutProspect::Client, StatutProspect::PasInteresse], true)) {
+            return false;
+        }
+
+        return $this->dateRelance <= new \DateTimeImmutable('today');
     }
 
     public function getLatitude(): ?float

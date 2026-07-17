@@ -24,6 +24,10 @@ return [
         'path' => './assets/js/kanban.js',
         'entrypoint' => true,
     ],
+    'prospect-form' => [
+        'path' => './assets/js/prospect-form.js',
+        'entrypoint' => true,
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],
@@ -41,6 +45,13 @@ return [
     ],
     'bootstrap/dist/css/bootstrap.min.css' => [
         'version' => '5.3.8',
+        'type' => 'css',
+    ],
+    'leaflet' => [
+        'version' => '1.9.4',
+    ],
+    'leaflet/dist/leaflet.min.css' => [
+        'version' => '1.9.4',
         'type' => 'css',
     ],
 ];
