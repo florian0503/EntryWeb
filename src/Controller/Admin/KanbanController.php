@@ -99,6 +99,14 @@ class KanbanController extends AbstractController
             ->set('retour', 'kanban')
             ->generateUrl();
 
+        $statuts = array_map(
+            static fn (StatutProspect $statut): array => [
+                'value' => $statut->value,
+                'label' => $statut->label(),
+            ],
+            StatutProspect::cases()
+        );
+
         return $this->render('admin/kanban.html.twig', [
             'villes' => $villes,
             'villeActive' => $villeActive,
@@ -106,6 +114,7 @@ class KanbanController extends AbstractController
             'editUrls' => $editUrls,
             'newProspectUrl' => $newProspectUrl,
             'fichesJson' => json_encode($fiches, \JSON_HEX_TAG | \JSON_HEX_APOS | \JSON_HEX_QUOT | \JSON_HEX_AMP | \JSON_THROW_ON_ERROR),
+            'statutsJson' => json_encode($statuts, \JSON_HEX_TAG | \JSON_HEX_APOS | \JSON_HEX_QUOT | \JSON_HEX_AMP | \JSON_THROW_ON_ERROR),
         ]);
     }
 
