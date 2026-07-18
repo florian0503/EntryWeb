@@ -6343,3 +6343,153 @@ html, body {
 .article-list li strong {
     color: #111;
 }
+
+/* ============================================================
+   Pack animations 1 : hero vivant, boutons
+   ============================================================ */
+
+/* --- Hero vivant : blobs animes + grain --- */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-container {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-fond {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.hero-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    will-change: transform;
+}
+
+.hero-blob-1 {
+    width: 480px;
+    height: 480px;
+    left: -120px;
+    top: -160px;
+    background: radial-gradient(circle at 30% 30%, rgba(0, 102, 255, 0.35), rgba(0, 102, 255, 0) 70%);
+    animation: hero-derive-1 22s ease-in-out infinite alternate;
+}
+
+.hero-blob-2 {
+    width: 420px;
+    height: 420px;
+    right: -100px;
+    top: -80px;
+    background: radial-gradient(circle at 70% 40%, rgba(51, 133, 255, 0.28), rgba(51, 133, 255, 0) 70%);
+    animation: hero-derive-2 26s ease-in-out infinite alternate;
+}
+
+.hero-blob-3 {
+    width: 400px;
+    height: 400px;
+    left: 35%;
+    bottom: -200px;
+    background: radial-gradient(circle at 50% 60%, rgba(158, 197, 255, 0.50), rgba(158, 197, 255, 0) 70%);
+    animation: hero-derive-3 19s ease-in-out infinite alternate;
+}
+
+@keyframes hero-derive-1 {
+    to { transform: translate(90px, 60px) scale(1.15); }
+}
+
+@keyframes hero-derive-2 {
+    to { transform: translate(-70px, 50px) scale(0.9); }
+}
+
+@keyframes hero-derive-3 {
+    to { transform: translate(-60px, -70px) scale(1.1); }
+}
+
+.hero-fond::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+/* --- Micro-interactions boutons --- */
+
+.btn {
+    transition: all 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 102, 255, 0.20);
+}
+
+.btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 10px rgba(0, 102, 255, 0.15);
+}
+
+.btn:focus-visible {
+    outline: 2px solid #0066ff;
+    outline-offset: 2px;
+}
+
+/* --- Accessibilite : reduction des animations --- */
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-blob {
+        animation: none;
+    }
+
+    .btn,
+    .btn:hover,
+    .btn:active {
+        transform: none;
+    }
+}
+
+/* --- Intro particules --- */
+
+body.intro-active {
+    overflow: hidden;
+}
+
+body.intro-active .cookie-banner {
+    visibility: hidden;
+}
+
+.intro {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    cursor: pointer;
+    background:
+        radial-gradient(ellipse at 50% 45%, rgba(0, 102, 255, 0.16), transparent 60%),
+        #050d1f;
+    transition: opacity 0.75s cubic-bezier(0.65, 0, 0.35, 1), transform 0.75s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.intro-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.intro.intro-revele {
+    opacity: 0;
+    transform: scale(1.14);
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .intro {
+        display: none;
+    }
+}

@@ -24,6 +24,10 @@
         {% endblock %}
     </head>
     <body>
+        {% if not app.request.cookies.has('intro_vue') %}
+            {% include '_partials/intro.html.twig' %}
+        {% endif %}
+
         {% include '_partials/header.html.twig' %}
         
         <main>
