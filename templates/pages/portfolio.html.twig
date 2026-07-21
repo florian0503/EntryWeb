@@ -22,30 +22,49 @@
                     <button type="button" class="realisations-filter-btn" data-filter="{{ category.slug }}" data-realisations-filter-target="filterBtn" data-action="click->realisations-filter#filter">{{ category.name }}</button>
                 {% endfor %}
             </div>
+        </div>
 
-            <div class="realisations-grid">
-                {% for realisation in realisations %}
-                    <article class="realisations-card swiss-fade-up" data-category="{{ realisation.category.slug }}" data-scroll-animation-target="item" data-delay="{{ ((loop.index0 % 4) * 100) }}" data-realisations-filter-target="card">
-                        <a href="{{ path('app_realisation_show', {id: realisation.id}) }}" class="realisations-card-image">
-                            {% if realisation.imageName %}
+        <div class="realisations-showcase">
+            {% for realisation in realisations %}
+                <div class="realisation-band{% if loop.index is even %} realisation-band--alt{% endif %}" data-category="{{ realisation.category.slug }}" data-realisations-filter-target="card">
+                    <div class="realisations-container">
+                    <article class="realisation-feature{% if loop.index is even %} realisation-feature--reverse{% endif %} swiss-fade-up" data-scroll-animation-target="item">
+                        <a href="{{ path('app_realisation_show', {id: realisation.id}) }}" class="realisation-feature-visual{% if realisation.hasDeviceMockup %} realisations-card-mockup{% endif %}">
+                            {% if realisation.hasDeviceMockup %}
+                                <div class="device-scene img-reveal">
+                                    <div class="device-laptop">
+                                        <div class="device-laptop-screen">
+                                            <img src="{{ asset('uploads/realisations/' ~ realisation.imageName) }}" alt="{{ realisation.title }} — version ordinateur">
+                                        </div>
+                                        <div class="device-laptop-base"></div>
+                                    </div>
+                                    <div class="device-tablet">
+                                        <img src="{{ asset('uploads/realisations/' ~ realisation.imageTabletName) }}" alt="{{ realisation.title }} — version tablette">
+                                    </div>
+                                    <div class="device-phone">
+                                        <img src="{{ asset('uploads/realisations/' ~ realisation.imageMobileName) }}" alt="{{ realisation.title }} — version mobile">
+                                    </div>
+                                </div>
+                            {% elseif realisation.imageName %}
                                 <img src="{{ asset('uploads/realisations/' ~ realisation.imageName) }}" alt="{{ realisation.title }}" class="img-reveal">
                             {% else %}
                                 <img src="https://via.placeholder.com/600x400?text={{ realisation.title|url_encode }}" alt="{{ realisation.title }}" class="img-reveal">
                             {% endif %}
                         </a>
-                        <div class="realisations-card-body">
-                            <div class="realisations-card-header">
-                                <h2 class="realisations-card-title">{{ realisation.title }}</h2>
-                                <span class="realisations-card-tag">{{ realisation.category.name }}</span>
-                            </div>
-                            <p class="realisations-card-desc">{{ realisation.description|slice(0, 150) }}{% if realisation.description|length > 150 %}...{% endif %}</p>
+                        <div class="realisation-feature-content">
+                            <span class="realisations-card-tag">{{ realisation.category.name }}</span>
+                            <h2 class="realisation-feature-title">{{ realisation.title }}</h2>
+                            <p class="realisation-feature-desc">{{ realisation.description }}</p>
                             <a href="{{ path('app_realisation_show', {id: realisation.id}) }}" class="realisations-card-link">Voir la réalisation
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                             </a>
                         </div>
                     </article>
-                {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
 
+            <div class="realisations-container">
                 <div class="realisations-empty" data-realisations-filter-target="emptyState" style="display: none;">
                     {% if realisations|length == 0 %}
                         <p>Nos réalisations arrivent bientôt.</p>
@@ -54,16 +73,18 @@
                     {% endif %}
                 </div>
             </div>
+        </div>
 
-            {% if realisations|length > 2 %}
+        {% if realisations|length > 2 %}
+            <div class="realisations-container">
                 <div class="realisations-load-more">
                     <button type="button" class="btn-load-more is-hidden" data-realisations-filter-target="loadMoreBtn" data-action="click->realisations-filter#loadMore">
                         Voir plus
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                 </div>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </section>
 
     <section class="cta swiss-scale" data-scroll-animation-target="item">

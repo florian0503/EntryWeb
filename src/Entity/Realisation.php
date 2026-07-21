@@ -36,6 +36,18 @@ class Realisation
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $imageName = null;
 
+    #[Vich\UploadableField(mapping: 'realisations', fileNameProperty: 'imageTabletName')]
+    private ?File $imageTabletFile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imageTabletName = null;
+
+    #[Vich\UploadableField(mapping: 'realisations', fileNameProperty: 'imageMobileName')]
+    private ?File $imageMobileFile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imageMobileName = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $clientName = null;
 
@@ -121,6 +133,63 @@ class Realisation
         $this->imageName = $imageName;
 
         return $this;
+    }
+
+    public function setImageTabletFile(?File $imageTabletFile = null): void
+    {
+        $this->imageTabletFile = $imageTabletFile;
+
+        if (null !== $imageTabletFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getImageTabletFile(): ?File
+    {
+        return $this->imageTabletFile;
+    }
+
+    public function getImageTabletName(): ?string
+    {
+        return $this->imageTabletName;
+    }
+
+    public function setImageTabletName(?string $imageTabletName): static
+    {
+        $this->imageTabletName = $imageTabletName;
+
+        return $this;
+    }
+
+    public function setImageMobileFile(?File $imageMobileFile = null): void
+    {
+        $this->imageMobileFile = $imageMobileFile;
+
+        if (null !== $imageMobileFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getImageMobileFile(): ?File
+    {
+        return $this->imageMobileFile;
+    }
+
+    public function getImageMobileName(): ?string
+    {
+        return $this->imageMobileName;
+    }
+
+    public function setImageMobileName(?string $imageMobileName): static
+    {
+        $this->imageMobileName = $imageMobileName;
+
+        return $this;
+    }
+
+    public function hasDeviceMockup(): bool
+    {
+        return null !== $this->imageName && null !== $this->imageTabletName && null !== $this->imageMobileName;
     }
 
     public function getClientName(): ?string
