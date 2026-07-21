@@ -13,7 +13,8 @@ EXIT_CODE=0
 echo "🔍 Vérification : Pas de balise <script> dans les fichiers Twig..."
 
 # Rechercher toutes les occurrences de <script dans les fichiers .html.twig
-VIOLATIONS=$(grep -rnE '<script' "$TEMPLATES_DIR" --include="*.html.twig" || true)
+# Exception : <script type="application/ld+json"> (donnees structurees SEO, pas du JavaScript)
+VIOLATIONS=$(grep -rnE '<script' "$TEMPLATES_DIR" --include="*.html.twig" | grep -vE 'application/ld\+json' || true)
 
 if [ -n "$VIOLATIONS" ]; then
     echo ""
