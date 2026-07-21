@@ -61,7 +61,31 @@ class RealisationCrudController extends AbstractCrudController
         yield AssociationField::new('category', 'Catégorie')
             ->setRequired(true);
 
-        yield TextField::new('imageFile', 'Image')
+        yield TextField::new('imageFile', 'Screenshot desktop')
+            ->setFormType(VichImageType::class)
+            ->setFormTypeOptions([
+                'required' => false,
+                'allow_delete' => true,
+                'delete_label' => 'Supprimer l\'image',
+                'download_uri' => false,
+                'image_uri' => true,
+                'asset_helper' => true,
+            ])
+            ->onlyOnForms();
+
+        yield TextField::new('imageTabletFile', 'Screenshot tablette')
+            ->setFormType(VichImageType::class)
+            ->setFormTypeOptions([
+                'required' => false,
+                'allow_delete' => true,
+                'delete_label' => 'Supprimer l\'image',
+                'download_uri' => false,
+                'image_uri' => true,
+                'asset_helper' => true,
+            ])
+            ->onlyOnForms();
+
+        yield TextField::new('imageMobileFile', 'Screenshot mobile')
             ->setFormType(VichImageType::class)
             ->setFormTypeOptions([
                 'required' => false,
