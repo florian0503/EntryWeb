@@ -3,7 +3,7 @@
 {% block title %}{{ realisation.title }} — EntryWeb{% endblock %}
 {% block meta_description %}Découvrez la réalisation {{ realisation.title }} réalisée par EntryWeb.{% endblock %}
 
-{% block stylesheets %}
+{% block body %}
 <style>
     main {
         display: flex;
@@ -183,9 +183,6 @@
     .preview-blocked a { color: #0066ff; font-weight: 600; text-decoration: none; }
     .preview-blocked a:hover { text-decoration: underline; }
 </style>
-{% endblock %}
-
-{% block body %}
 <div data-controller="realisation-preview" class="preview-root">
 <div class="preview-topbar">
     <a href="{{ path('app_portfolio') }}" class="preview-back">
