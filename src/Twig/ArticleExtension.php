@@ -36,7 +36,7 @@ class ArticleExtension extends AbstractExtension
 
             // Ligne qui commence par "🚩" ou "•" → liste
             $lines = explode("\n", $para);
-            $isList = count(array_filter($lines, fn ($l) => preg_match('/^[🚩•·]\s/', trim($l)))) > 0;
+            $isList = count(array_filter($lines, fn ($l) => preg_match('/^[🚩•·]\s/u', trim($l)))) > 0;
 
             if ($isList) {
                 $html .= '<ul class="article-list">';
@@ -45,7 +45,7 @@ class ArticleExtension extends AbstractExtension
                     if ('' === $line) {
                         continue;
                     }
-                    $line = preg_replace('/^[🚩•·]\s*/', '', $line);
+                    $line = preg_replace('/^[🚩•·]\s*/u', '', $line);
                     $line = $this->inlineFormat($line);
                     $html .= '<li>'.$line.'</li>';
                 }

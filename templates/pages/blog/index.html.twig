@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Blog - EntryWeb{% endblock %}
+{% block title %}Blog{% if page > 1 %} - Page {{ page }}{% endif %} - EntryWeb{% endblock %}
 
 {% block body %}
-<div data-controller="scroll-animation">
+<div data-controller="scroll-animation blog-search" data-blog-search-url-value="{{ path('app_blog') }}">
 
     {# Hero #}
     <section class="page-hero">
@@ -17,10 +17,45 @@
         </div>
     </section>
 
+    {# Recherche #}
+    <section class="blog-search">
+        <div class="blog-container">
+            <form action="{{ path('app_blog') }}" method="get" class="blog-search-form swiss-fade-up" data-scroll-animation-target="item" data-delay="150" role="search" data-action="submit->blog-search#submit">
+                <svg class="blog-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="search" name="q" value="{{ q }}" placeholder="Rechercher un article..." class="blog-search-input" aria-label="Rechercher un article" autocomplete="off" data-blog-search-target="input" data-action="input->blog-search#search">
+                <button type="button" class="blog-search-clear" data-blog-search-target="clear" data-action="click->blog-search#clear" aria-label="Effacer la recherche" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                <button type="submit" class="blog-search-btn">Rechercher</button>
+            </form>
+        </div>
+    </section>
+
+    <div id="blog-results" data-blog-search-target="results">
+
+    {% if q %}
+        <div class="blog-container">
+            <p class="blog-search-info">
+                {{ total }} article{{ total > 1 ? 's' : '' }} pour «&nbsp;{{ q }}&nbsp;»
+                — <a href="{{ path('app_blog') }}">voir tous les articles</a>
+            </p>
+        </div>
+    {% endif %}
+
     {% if articles is empty %}
         <section class="blog-empty">
             <div class="blog-container">
-                <p>Aucun article pour le moment. Revenez bientôt !</p>
+                {% if q %}
+                    <p>Aucun article ne correspond à votre recherche.</p>
+                {% else %}
+                    <p>Aucun article pour le moment. Revenez bientôt !</p>
+                {% endif %}
             </div>
         </section>
     {% else %}
@@ -89,7 +124,29 @@
         </section>
         {% endif %}
 
+        {# Pagination #}
+        {% if totalPages > 1 %}
+        <nav class="blog-pagination" aria-label="Pagination du blog">
+            {% set extra = q ? {q: q} : {} %}
+            {% if page > 1 %}
+                <a href="{{ page - 1 == 1 ? path('app_blog', extra) : path('app_blog_page', {page: page - 1}|merge(extra)) }}" class="blog-pagination-link blog-pagination-link--arrow" aria-label="Page précédente">&larr;</a>
+            {% endif %}
+            {% for p in 1..totalPages %}
+                {% if p == page %}
+                    <span class="blog-pagination-link is-active" aria-current="page">{{ p }}</span>
+                {% else %}
+                    <a href="{{ p == 1 ? path('app_blog', extra) : path('app_blog_page', {page: p}|merge(extra)) }}" class="blog-pagination-link">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if page < totalPages %}
+                <a href="{{ path('app_blog_page', {page: page + 1}|merge(extra)) }}" class="blog-pagination-link blog-pagination-link--arrow" aria-label="Page suivante">&rarr;</a>
+            {% endif %}
+        </nav>
+        {% endif %}
+
     {% endif %}
+
+    </div>
 
     {# CTA newsletter / contact #}
     <section class="blog-cta swiss-fade-up" data-scroll-animation-target="item">

@@ -30,6 +30,39 @@ class ArticleRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return Article[]
+     */
+    public function findPublishedPaginated(int $offset, int $limit, ?string $query = null): array
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->andWhere('a.isPublished = true')
+            ->orderBy('a.publishedAt', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        if (null !== $query) {
+            $qb->andWhere('a.title LIKE :query OR a.excerpt LIKE :query OR a.content LIKE :query')
+                ->setParameter('query', '%'.$query.'%');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function countPublished(?string $query = null): int
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->select('COUNT(a.id)')
+            ->andWhere('a.isPublished = true');
+
+        if (null !== $query) {
+            $qb->andWhere('a.title LIKE :query OR a.excerpt LIKE :query OR a.content LIKE :query')
+                ->setParameter('query', '%'.$query.'%');
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
     public function findOnePublishedBySlug(string $slug): ?Article
     {
         return $this->createQueryBuilder('a')
